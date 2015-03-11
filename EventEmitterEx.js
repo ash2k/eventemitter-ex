@@ -27,4 +27,15 @@
         };
     };
 
+    EventEmitterEx.prototype.flatMap = function flatMap (f) {
+        var res = new EventEmitterEx();
+
+        res.pipeExcept(this, 'end');
+        this.on('end', function (/* arguments */) {
+            res.pipeExcept(f.apply(null, arguments));
+        });
+
+        return res;
+    };
+
 })();
