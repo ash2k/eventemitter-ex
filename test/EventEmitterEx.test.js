@@ -214,6 +214,29 @@
 
         });
 
+        describe('#map()', function () {
+
+            it('should call each map function and return results in order', function (done) {
+                var eex = new EEX();
+
+                var f1 = function (a1, a2) {
+                    return a1 + a2;
+                };
+                var f2 = function (a1, a2) {
+                    return a1 * a2;
+                };
+
+                var r = eex.map(f1, f2);
+                r.on('end', function (r1, r2) {
+                    r1.should.be.equal(6);
+                    r2.should.be.equal(8);
+                    done();
+                });
+                eex.emit('end', 4, 2);
+            });
+
+        });
+
         describe('#flatMap()', function () {
 
             var i = 0;

@@ -71,6 +71,23 @@
         }
     };
 
+    EventEmitterEx.prototype.map = function map (/* arguments */) {
+        var eex = new EventEmitterEx(),
+            mapArgs = Array.prototype.slice.call(arguments);
+
+        eex.pipeExcept(this, 'end');
+        this.on('end', function (/* arguments */) {
+            var endArgs = arguments;
+            var result = mapArgs.map(function (f) {
+                return f.apply(null, endArgs);
+            });
+            result.unshift('end');
+            eex.emit.apply(eex, result);
+        });
+
+        return eex;
+    };
+
     EventEmitterEx.prototype.flatMap = function flatMap (f) {
         var res = new EventEmitterEx();
 
