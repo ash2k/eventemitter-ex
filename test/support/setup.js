@@ -2,6 +2,7 @@
     'use strict';
 
     var chai = require('chai');
+    chai.config.includeStack = true;
     global.chai = chai;
     global.should = chai.should();
     global.expect = chai.expect;
