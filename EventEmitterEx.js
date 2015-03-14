@@ -100,4 +100,12 @@
         return (typeof eex.listenerCountOnAll === 'function' ? eex.listenerCountOnAll(type) : 0) + EE.listenerCount(eex, type);
     };
 
+    EventEmitterEx.startAsync = function startAsync (f) {
+        var r = new EventEmitterEx();
+
+        setImmediate(f.bind(null, r));
+
+        return r;
+    }
+
 })();

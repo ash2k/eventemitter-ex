@@ -10,6 +10,19 @@
     });
 
     describe('EventEmitterEx', function () {
+
+        describe('#startAsync()', function () {
+
+            it('should call function with a new emitter', function (done) {
+                var eexResult = EEX.startAsync(function (eex) {
+                    eex.should.be.equal(eexResult);
+                    done();
+                });
+                eexResult.should.be.instanceOf(EEX);
+            });
+
+        });
+
         describe('#pipeExcept()', function () {
 
             var i = 0;
