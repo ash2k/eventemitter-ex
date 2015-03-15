@@ -4,7 +4,8 @@
   "description": "EventEmitter extensions",
   "main": "EventEmitterEx.js",
   "scripts": {
-    "test": "mocha test"
+    "spec": "$(npm bin)/mocha test",
+    "test": "$(npm bin)/jshint --exclude-path=.gitignore . && $(npm bin)/mocha test"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,10 @@
   "author": "Mikhail Mazurskiy <mikhail.mazursky@gmail.com> (ash2k.com)",
   "license": "Apache 2",
   "devDependencies": {
-    "chai": "^2.1.1",
-    "mocha": "^2.2.1",
-    "sinon": "^1.13.0",
-    "sinon-chai": "^2.7.0"
+    "chai": "2.x.x",
+    "jshint": "2.x.x",
+    "mocha": "2.x.x",
+    "sinon": "1.x.x",
+    "sinon-chai": "2.x.x"
   }
 }
