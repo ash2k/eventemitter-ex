@@ -120,7 +120,13 @@
     EventEmitterEx.startAsync = function startAsync (f) {
         var r = new EventEmitterEx();
 
-        setImmediate(f.bind(null, r));
+        setImmediate(function () {
+            try {
+                f(r);
+            } catch (err) {
+                r.emit('error', err);
+            }
+        });
 
         return r;
     }
