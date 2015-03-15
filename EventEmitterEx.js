@@ -9,8 +9,6 @@
     function EventEmitterEx () {
         EE.call(this);
         this._onAllListeners = [];
-        this._originalEmit = this.emit;
-        this.emit = emit;
     }
     util.inherits(EventEmitterEx, EE);
 
@@ -21,13 +19,13 @@
         this._onAllListeners.push([f, except]);
     };
 
-    function emit (type /* arguments */) {
+    EventEmitterEx.prototype.emit = function emit (type /* arguments */) {
         var args = arguments,
             res = false,
             filtered = this.listenersOnAll(type);
 
         if (type !== 'error' || filtered.length === 0 || EE.listenerCount(this, type)) {
-            res = this._originalEmit.apply(this, args);
+            res = EventEmitterEx.super_.prototype.emit.apply(this, args);
         }
 
         filtered.forEach(function (listener) {
@@ -35,7 +33,7 @@
         });
 
         return res || filtered.length > 0;
-    }
+    };
 
     EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
         var self = this,

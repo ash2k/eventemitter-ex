@@ -1,9 +1,10 @@
 (function () {
     'use strict';
-    var EventEmitter = require('events').EventEmitter
-        , EEX = require('../EventEmitterEx')
-        , emitter
-        ;
+    /*jshint expr: true*/
+
+    var EventEmitter = require('events').EventEmitter,
+        EEX = require('../EventEmitterEx'),
+        emitter;
 
     beforeEach(function () {
         emitter = new EEX();
@@ -43,20 +44,20 @@
         describe('#pipeExcept()', function () {
 
             var i = 0;
-            [EventEmitter, EEX].forEach(function (sourceType) {
+            [EventEmitter, EEX].forEach(function (SourceType) {
                 i++;
                 var source;
 
                 beforeEach(function () {
-                    source = new sourceType()
+                    source = new SourceType();
                 });
 
                 it('should call corresponding callbacks on original emitter #' + i, function () {
-                    var spyA = sinon.spy()
-                        , spyError1 = sinon.spy()
-                        , spyError2 = sinon.spy()
-                        , spyEnd = sinon.spy()
-                        , err = new Error('123');
+                    var spyA = sinon.spy(),
+                        spyError1 = sinon.spy(),
+                        spyError2 = sinon.spy(),
+                        spyEnd = sinon.spy(),
+                        err = new Error('123');
 
                     source.on('a', spyA);
                     source.on('end', spyEnd);
@@ -81,11 +82,11 @@
                 });
 
                 it('should pipe all events except specified #' + i, function () {
-                    var spyA = sinon.spy()
-                        , spyError1 = sinon.spy()
-                        , spyError2 = sinon.spy()
-                        , spyEnd = sinon.spy()
-                        , err = new Error('123');
+                    var spyA = sinon.spy(),
+                        spyError1 = sinon.spy(),
+                        spyError2 = sinon.spy(),
+                        spyEnd = sinon.spy(),
+                        err = new Error('123');
 
                     source.on('error', spyError1);
 
@@ -109,8 +110,8 @@
                 });
 
                 it('should not throw on unhandled error on original emitter #' + i, function () {
-                    var spyError = sinon.spy()
-                        , err = new Error('123');
+                    var spyError = sinon.spy(),
+                        err = new Error('123');
 
                     emitter.pipeExcept(source);
 
@@ -122,8 +123,8 @@
                 });
 
                 it('should throw on unhandled error on piped emitter #' + i, function () {
-                    var spyError = sinon.spy()
-                        , err = new Error('123');
+                    var spyError = sinon.spy(),
+                        err = new Error('123');
 
                     source.on('error', spyError);
 
@@ -137,9 +138,9 @@
                 });
 
                 it('should not emit error if it is excepted #' + i, function () {
-                    var spyError1 = sinon.spy()
-                        , spyError2 = sinon.spy()
-                        , err = new Error('123');
+                    var spyError1 = sinon.spy(),
+                        spyError2 = sinon.spy(),
+                        err = new Error('123');
 
                     emitter.pipeExcept(source, 'error');
 
@@ -153,8 +154,8 @@
                 });
 
                 it('should not throw error if it is excepted #' + i, function () {
-                    var spyError = sinon.spy()
-                        , err = new Error('123');
+                    var spyError = sinon.spy(),
+                        err = new Error('123');
 
                     emitter.pipeExcept(source, 'error');
 
@@ -176,14 +177,13 @@
                 });
 
                 var j = 0;
-                [EventEmitter, EEX].forEach(function (sourceType2) {
+                [EventEmitter, EEX].forEach(function (SourceType2) {
                     j++;
                     it('should pipe events from multiple sources #' + i + ':' + j, function () {
-                        var spyError = sinon.spy()
-                            , spyEnd = sinon.spy()
-                            , err = new Error('123')
-                            , source2 = new sourceType2()
-                            ;
+                        var spyError = sinon.spy(),
+                            spyEnd = sinon.spy(),
+                            err = new Error('123'),
+                            source2 = new SourceType2();
 
                         emitter.pipeExcept(source);
                         emitter.pipeExcept(source2);
@@ -201,13 +201,12 @@
                 });
 
                 it('should support multiple pipes from single source #' + i, function () {
-                    var spyError = sinon.spy()
-                        , spyEnd = sinon.spy()
-                        , spyError2 = sinon.spy()
-                        , spyEnd2 = sinon.spy()
-                        , err = new Error('123')
-                        , emitter2 = new EEX()
-                        ;
+                    var spyError = sinon.spy(),
+                        spyEnd = sinon.spy(),
+                        spyError2 = sinon.spy(),
+                        spyEnd2 = sinon.spy(),
+                        err = new Error('123'),
+                        emitter2 = new EEX();
 
                     emitter.pipeExcept(source);
                     emitter2.pipeExcept(source);
@@ -268,17 +267,17 @@
 
             var i = 0;
             [[EventEmitter, EventEmitter], [EventEmitter, EEX], [EEX, EventEmitter], [EEX, EEX]]
-                .forEach(function (sourceTypes) {
+                .forEach(function (SourceTypes) {
                     i++;
                     it('should pipe all events and call map function #' + i, function (done) {
-                        var spyData = sinon.spy()
-                            , spyInfo = sinon.spy()
-                            , spyMsg = sinon.spy()
-                            , A = 1, B = 40, C = 2, DATA = 24, MSG = 'FP (allthethings)';
+                        var spyData = sinon.spy(),
+                            spyInfo = sinon.spy(),
+                            spyMsg = sinon.spy(),
+                            A = 1, B = 40, C = 2, DATA = 24, MSG = 'FP (allthethings)';
 
                         emitter
                             .flatMap(function (a, b, c) {
-                                var emitter2 = new sourceTypes[0]();
+                                var emitter2 = new SourceTypes[0]();
 
                                 setImmediate(function () {
                                     emitter2.emit('info', a);
@@ -288,7 +287,7 @@
                                 return emitter2;
                             })
                             .flatMap(function (b, c) {
-                                var emitter3 = new sourceTypes[1]();
+                                var emitter3 = new SourceTypes[1]();
 
                                 setImmediate(function () {
                                     emitter3.emit('data', DATA);
@@ -316,18 +315,18 @@
                 });
 
             i = 0;
-            [EventEmitter, EEX].forEach(function (sourceType) {
+            [EventEmitter, EEX].forEach(function (SourceType) {
                 i++;
                 it('should propagate error event and do not call next map function #' + i, function (done) {
-                    var spyMapper = sinon.spy()
-                        , spyInfo = sinon.spy()
-                        , spyMsg = sinon.spy()
-                        , A = 1, B = 40, C = 2, MSG = 'FP (allthethings)'
-                        , ERR = new Error('Something fishy just happened!');
+                    var spyMapper = sinon.spy(),
+                        spyInfo = sinon.spy(),
+                        spyMsg = sinon.spy(),
+                        A = 1, B = 40, C = 2, MSG = 'FP (allthethings)',
+                        ERR = new Error('Something fishy just happened!');
 
                     emitter
                         .flatMap(function (a, b, c) {
-                            var emitter2 = new sourceType();
+                            var emitter2 = new SourceType();
 
                             setImmediate(function () {
                                 emitter2.emit('info', a);
