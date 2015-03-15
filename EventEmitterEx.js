@@ -15,8 +15,8 @@
     util.inherits(EventEmitterEx, EE);
 
     EventEmitterEx.prototype.onAllExcept = function onAllExcept (f /* arguments */) {
-        if (typeof f !== 'function')
-            throw new Error('Listener must be a function. Got ' + typeof f);
+        assertFunction(f);
+
         var except = Array.prototype.slice.call(arguments, 1);
         this._onAllListeners.push([f, except]);
     };
@@ -75,6 +75,8 @@
         var eex = new EventEmitterEx(),
             mapArgs = Array.prototype.slice.call(arguments);
 
+        mapArgs.forEach(assertFunction);
+
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
             var endArgs = arguments;
@@ -89,6 +91,8 @@
     };
 
     EventEmitterEx.prototype.flatMap = function flatMap (f) {
+        assertFunction(f);
+
         var res = new EventEmitterEx();
 
         res.pipeExcept(this, 'end');
@@ -118,6 +122,8 @@
     };
 
     EventEmitterEx.startAsync = function startAsync (f) {
+        assertFunction(f);
+
         var r = new EventEmitterEx();
 
         setImmediate(function () {
@@ -129,6 +135,11 @@
         });
 
         return r;
+    };
+
+    function assertFunction (f) {
+        if (typeof f !== 'function')
+            throw new TypeError('Argument must be a function. Got ' + typeof f);
     }
 
 })();

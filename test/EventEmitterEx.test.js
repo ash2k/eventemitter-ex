@@ -13,6 +13,12 @@
 
         describe('#startAsync()', function () {
 
+            it('should throw exception on non-function arguments', function () {
+                expect(function () {
+                    EEX.startAsync(42);
+                }).to.throw(TypeError, /Argument must be a function/);
+            });
+
             it('should call function with a new emitter', function (done) {
                 var eexResult = EEX.startAsync(function (eex) {
                     eex.should.be.equal(eexResult);
@@ -227,6 +233,12 @@
 
         describe('#map()', function () {
 
+            it('should throw exception on non-function arguments', function () {
+                expect(function () {
+                    emitter.map(function () {}, 2);
+                }).to.throw(TypeError, /Argument must be a function/);
+            });
+
             it('should call each map function and return results in order', function (done) {
                 var eex = new EEX();
 
@@ -249,6 +261,12 @@
         });
 
         describe('#flatMap()', function () {
+
+            it('should throw exception on non-function arguments', function () {
+                expect(function () {
+                    emitter.flatMap(42);
+                }).to.throw(TypeError, /Argument must be a function/);
+            });
 
             var i = 0;
             [[EventEmitter, EventEmitter], [EventEmitter, EEX], [EEX, EventEmitter], [EEX, EEX]]
