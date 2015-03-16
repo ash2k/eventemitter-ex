@@ -243,6 +243,20 @@
                 emitter.emit('end');
             });
 
+            it('should emit exceptions as error', function (done) {
+                var err = new Error('234');
+                emitter
+                    .map(function () { throw err; })
+                    .on('end', function () {
+                        done(new Error('Expecting error'));
+                    })
+                    .on('error', function (error) {
+                        error.should.be.equal(err);
+                        done();
+                    });
+                emitter.emit('end');
+            });
+
             it('should throw exception on non-function arguments', function () {
                 expect(function () {
                     emitter.map(function () {}, 2);
