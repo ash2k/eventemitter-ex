@@ -79,7 +79,7 @@
         this.on('end', function (/* arguments */) {
             var endArgs = arguments;
             var result = mapArgs.map(function (f) {
-                return f.apply(null, endArgs);
+                return f.apply(eex, endArgs);
             });
             result.unshift('end');
             eex.emit.apply(eex, result);
