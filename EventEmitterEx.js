@@ -77,11 +77,16 @@
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
-            var endArgs = arguments;
-            var result = mapArgs.map(function (f) {
-                return f.apply(eex, endArgs);
-            });
-            result.unshift('end');
+            try {
+                var endArgs = arguments;
+                var result = mapArgs.map(function (f) {
+                    return f.apply(eex, endArgs);
+                });
+                result.unshift('end');
+            } catch (err) {
+                eex.emit('error', err);
+                return;
+            }
             eex.emit.apply(eex, result);
         });
 
