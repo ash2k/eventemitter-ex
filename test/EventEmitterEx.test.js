@@ -232,6 +232,17 @@
 
         describe('#map()', function () {
 
+            it('should set this to emitter', function (done) {
+                var mapped = emitter.map(function () { return this; });
+                mapped
+                    .on('end', function (result) {
+                        result.should.be.equal(mapped);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
             it('should throw exception on non-function arguments', function () {
                 expect(function () {
                     emitter.map(function () {}, 2);
