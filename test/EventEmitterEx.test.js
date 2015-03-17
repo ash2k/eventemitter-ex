@@ -52,6 +52,10 @@
                     source = new SourceType();
                 });
 
+                it('should return self #' + i, function () {
+                    emitter.pipeExcept(source).should.be.equal(emitter);
+                });
+
                 it('should call corresponding callbacks on original emitter #' + i, function () {
                     var spyA = sinon.spy(),
                         spyError1 = sinon.spy(),

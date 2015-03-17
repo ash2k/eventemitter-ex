@@ -67,6 +67,7 @@
         } else {
             throw new TypeError('Expecting EventEmitter or EventEmitterEx. Given: ' + typeof ee);
         }
+        return this;
     };
 
     EventEmitterEx.prototype.map = function map (/* arguments */) {
