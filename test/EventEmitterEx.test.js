@@ -243,6 +243,19 @@
                 emitter.emit('end');
             });
 
+            it('should support returning multiple values as array', function (done) {
+                var A = 1, B = 2;
+                var mapped = emitter.map(function () { return [A, B]; });
+                mapped
+                    .on('end', function (a, b) {
+                        a.should.be.equal(A);
+                        b.should.be.equal(B);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
             it('should emit exceptions as error', function (done) {
                 var err = new Error('234');
                 emitter
