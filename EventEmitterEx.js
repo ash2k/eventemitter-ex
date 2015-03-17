@@ -80,8 +80,11 @@
             try {
                 var endArgs = arguments;
                 var result = mapArgs.map(function (f) {
-                    return f.apply(eex, endArgs);
+                    var res = f.apply(eex, endArgs);
+                    return Array.isArray(res) ? res : [res];
                 });
+                // flatten the array
+                result = [].concat.apply([], result);
                 result.unshift('end');
             } catch (err) {
                 eex.emit('error', err);
