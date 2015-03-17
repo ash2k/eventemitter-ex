@@ -121,7 +121,8 @@
     };
 
     EventEmitterEx.listenerCount = function listenerCount (eex, type) {
-        return (typeof eex.listenerCountOnAll === 'function' ? eex.listenerCountOnAll(type) : 0) + EE.listenerCount(eex, type);
+        return (typeof eex.listenerCountOnAll === 'function' ? eex.listenerCountOnAll(type) : 0) +
+            EE.listenerCount(eex, type);
     };
 
     EventEmitterEx.startAsync = function startAsync (f) {
