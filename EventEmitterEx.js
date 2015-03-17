@@ -13,7 +13,7 @@
     util.inherits(EventEmitterEx, EE);
 
     EventEmitterEx.prototype.onAllExcept = function onAllExcept (f /* arguments */) {
-        assertFunction(f);
+        assertIsFunction(f);
 
         var except = Array.prototype.slice.call(arguments, 1);
         this._onAllListeners.push([f, except]);
@@ -73,7 +73,7 @@
         var eex = new EventEmitterEx(),
             mapArgs = Array.prototype.slice.call(arguments);
 
-        mapArgs.forEach(assertFunction);
+        mapArgs.forEach(assertIsFunction);
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
@@ -94,7 +94,7 @@
     };
 
     EventEmitterEx.prototype.flatMap = function flatMap (f) {
-        assertFunction(f);
+        assertIsFunction(f);
 
         var res = new EventEmitterEx();
 
@@ -125,7 +125,7 @@
     };
 
     EventEmitterEx.startAsync = function startAsync (f) {
-        assertFunction(f);
+        assertIsFunction(f);
 
         var r = new EventEmitterEx();
 
@@ -140,7 +140,7 @@
         return r;
     };
 
-    function assertFunction (f) {
+    function assertIsFunction (f) {
         if (typeof f !== 'function')
             throw new TypeError('Argument must be a function. Got ' + typeof f);
     }
