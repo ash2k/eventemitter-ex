@@ -35,6 +35,17 @@
         return res || filtered.length > 0;
     };
 
+    EventEmitterEx.prototype.emitAsync = function emitAsync (/* arguments */) {
+        var args = arguments,
+            self = this;
+
+        setImmediate(function () {
+            self.emit.apply(self, args);
+        });
+
+        return this;
+    };
+
     EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
         var self = this,
             except = Array.prototype.slice.call(arguments, 1);

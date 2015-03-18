@@ -30,6 +30,34 @@
 
         });
 
+        describe('#emitAsync()', function () {
+
+            it('should call emit() asynchronously', function (done) {
+                var spyEnd = sinon.spy();
+
+                emitter
+                    .on('error', done)
+                    .on('end1', spyEnd)
+                    .on('end', function () {
+                        spyEnd.calledWithExactly(1, 2, 3).should.be.true;
+                        done();
+                    })
+                    .emitAsync('end1', 1, 2, 3)
+                    .emitAsync('end')
+                    .should.be.equal(emitter);
+
+                spyEnd.callCount.should.be.equal(0);
+            });
+
+            it('should return self', function (done) {
+                emitter
+                    .on('error', done)
+                    .on('end', done)
+                    .emitAsync('end').should.be.equal(emitter);
+            });
+
+        });
+
         describe('#pipeExcept()', function () {
 
             var i = 0;
