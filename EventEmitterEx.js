@@ -78,9 +78,10 @@
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
+            var result;
             try {
                 var endArgs = arguments;
-                var result = mapArgs.map(function (f) {
+                result = mapArgs.map(function (f) {
                     var res = f.apply(eex, endArgs);
                     return Array.isArray(res) ? res : [res];
                 });
