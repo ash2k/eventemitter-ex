@@ -4,8 +4,8 @@
   "description": "EventEmitter extensions",
   "main": "EventEmitterEx.js",
   "scripts": {
-    "spec": "$(npm bin)/mocha test",
-    "test": "$(npm bin)/jshint --exclude-path=.gitignore . && $(npm bin)/mocha test"
+    "spec": "mocha test",
+    "test": "jshint --exclude-path=.gitignore . && mocha test"
   },
   "repository": {
     "type": "git",
