@@ -100,14 +100,14 @@
     EventEmitterEx.prototype.flatMap = function flatMap (f) {
         assertIsFunction(f);
 
-        var res = new EventEmitterEx();
+        var eex = new EventEmitterEx();
 
-        res.pipeExcept(this, 'end');
+        eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
-            res.pipeExcept(f.apply(null, arguments));
+            eex.pipeExcept(f.apply(eex, arguments));
         });
 
-        return res;
+        return eex;
     };
 
     EventEmitterEx.prototype.listenersOnAll = function listenersOnAll (type) {
