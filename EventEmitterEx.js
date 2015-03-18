@@ -129,18 +129,16 @@
             EE.listenerCount(eex, type);
     };
 
+    // Should NOT emit exceptions from function as errors.
+    // Code should not catch exceptions, thrown by listeners for 'end' event because
+    // emitting 'error' in that case is wrong - it is the callback that is failed, not the original
+    // operation. Also calling more than one 'final' callback is wrong.
     EventEmitterEx.startAsync = function startAsync (f) {
         assertIsFunction(f);
 
         var r = new EventEmitterEx();
 
-        setImmediate(function () {
-            try {
-                f(r);
-            } catch (err) {
-                r.emit('error', err);
-            }
-        });
+        setImmediate(f.bind(null, r));
 
         return r;
     };
