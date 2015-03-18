@@ -290,6 +290,22 @@
 
         describe('#flatMap()', function () {
 
+            it('should set this to emitter', function (done) {
+                var mapped = emitter
+                    .flatMap(function () {
+                        var self = this;
+                        return EEX.startAsync(function (eex) {
+                            eex.emit('end', self);
+                        });
+                    })
+                    .on('end', function (result) {
+                        result.should.be.equal(mapped);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
             it('should throw exception on non-function arguments', function () {
                 expect(function () {
                     emitter.flatMap(42);
