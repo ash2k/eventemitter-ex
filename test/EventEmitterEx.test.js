@@ -28,17 +28,6 @@
                 eexResult.should.be.instanceOf(EEX);
             });
 
-            it('should emit exceptions from function as errors', function (done) {
-                var e = new Error('234');
-                var eexResult = EEX.startAsync(function () {
-                    throw e;
-                });
-                eexResult.on('error', function (err) {
-                    err.should.be.equal(e);
-                    done();
-                });
-            });
-
         });
 
         describe('#pipeExcept()', function () {
