@@ -1,36 +1,36 @@
 {
-  "name": "eventemitter-ex",
-  "version": "0.0.4",
-  "description": "EventEmitter extensions",
-  "main": "EventEmitterEx.js",
-  "scripts": {
-    "spec": "mocha test",
-    "test": "jshint --exclude-path=.gitignore . && mocha test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ash2k/eventemitter-ex"
-  },
-  "bugs": {
-    "url": "https://github.com/ash2k/eventemitter-ex/issues"
-  },
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org/"
-  },
-  "keywords": [
-    "EventEmitter",
-    "stream",
-    "events",
-    "pipe",
-    "extensions"
-  ],
-  "author": "Mikhail Mazurskiy <mikhail.mazursky@gmail.com> (ash2k.com)",
-  "license": "Apache 2",
-  "devDependencies": {
-    "chai": "2.x.x",
-    "jshint": "2.x.x",
-    "mocha": "2.x.x",
-    "sinon": "1.x.x",
-    "sinon-chai": "2.x.x"
-  }
+    "name": "eventemitter-ex",
+    "version": "0.0.4",
+    "description": "EventEmitter extensions",
+    "main": "EventEmitterEx.js",
+    "scripts": {
+        "spec": "mocha test",
+        "test": "jshint --exclude-path=.gitignore . && mocha test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ash2k/eventemitter-ex"
+    },
+    "bugs": {
+        "url": "https://github.com/ash2k/eventemitter-ex/issues"
+    },
+    "publishConfig": {
+        "registry": "http://registry.npmjs.org/"
+    },
+    "keywords": [
+        "EventEmitter",
+        "stream",
+        "events",
+        "pipe",
+        "extensions"
+    ],
+    "author": "Mikhail Mazurskiy <mikhail.mazursky@gmail.com> (ash2k.com)",
+    "license": "Apache 2",
+    "devDependencies": {
+        "chai": "2.x.x",
+        "jshint": "2.x.x",
+        "mocha": "2.x.x",
+        "sinon": "1.x.x",
+        "sinon-chai": "2.x.x"
+    }
 }
