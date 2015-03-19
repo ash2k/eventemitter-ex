@@ -2,7 +2,8 @@
     'use strict';
 
     var EE = require('events').EventEmitter,
-        util = require('util');
+        util = require('util'),
+        assert = require('assert');
 
     module.exports = EventEmitterEx;
 
@@ -103,6 +104,47 @@
                 return;
             }
             eex.emit.apply(eex, result);
+        });
+
+        return eex;
+    };
+
+    // Takes zero or more functions and runs them in the same way as #map() but
+    // also providing a callback as an additional last parameter. After all functions
+    // had called the callback, results are emitted.
+    EventEmitterEx.prototype.mapAsync = function mapAsync (/* arguments */) {
+        var eex = new EventEmitterEx(),
+            funcs = Array.prototype.slice.call(arguments);
+
+        funcs.forEach(assertIsFunction);
+
+        eex.pipeExcept(this, 'end');
+        this.on('end', function (/* arguments */) {
+            var result = [], firstError, len = funcs.length;
+            var endArgs = Array.prototype.slice.call(arguments);
+            endArgs.push(callback);
+
+            funcs.forEach(function (f) {
+                f.apply(eex, endArgs);
+            });
+
+            function callback (err/* arguments */) {
+                if (err) {
+                    firstError = firstError || err;
+                } else {
+                    result.push(Array.prototype.slice.call(arguments, 1));
+                }
+                len--;
+                assert(len >= 0, 'Callback called more than once for each mapAsync() function!');
+                if (! len) {
+                    if (firstError) {
+                        eex.emit('error', firstError);
+                    } else {
+                        // flatten the array
+                        eex.emit.apply(eex, [].concat.apply(['end'], result));
+                    }
+                }
+            }
         });
 
         return eex;
