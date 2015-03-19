@@ -316,6 +316,107 @@
 
         });
 
+        describe('#mapAsync()', function () {
+
+            it('should throw if callback called too many times', function (done) {
+                var mapped = emitter.mapAsync(function (cb) {
+                    cb(null);
+                    expect(function () {
+                        cb(null);
+                    }).to.throw(Error, 'Callback called more than once for each mapAsync() function!');
+                    done();
+                });
+                mapped.on('error', done);
+                emitter.emit('end');
+            });
+
+            it('should support synchronous call of callback', function (done) {
+                var A = 42;
+                var mapped = emitter.mapAsync(function (param, cb) { cb(null, param); });
+                mapped
+                    .on('end', function (result) {
+                        result.should.be.equal(A);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end', A);
+            });
+
+            it('should support asynchronous call of callback', function (done) {
+                var A = 42;
+                var mapped = emitter.mapAsync(function (param, cb) { setImmediate(cb.bind(null, null, param)); });
+                mapped
+                    .on('end', function (result) {
+                        result.should.be.equal(A);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end', A);
+            });
+
+            it('should set this to emitter', function (done) {
+                var mapped = emitter.mapAsync(function (cb) { cb(null, this); });
+                mapped
+                    .on('end', function (result) {
+                        result.should.be.equal(mapped);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
+            it('should support returning multiple values as multiple arguments', function (done) {
+                var A = 1, B = 2;
+                var mapped = emitter.mapAsync(function (cb) { cb(null, A, B); });
+                mapped
+                    .on('end', function (a, b) {
+                        a.should.be.equal(A);
+                        b.should.be.equal(B);
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
+            it('should emit exceptions as error', function (done) {
+                var err = new Error('234');
+                emitter
+                    .mapAsync(function (cb) { cb(err); })
+                    .on('end', function () {
+                        done(new Error('Expecting error'));
+                    })
+                    .on('error', function (error) {
+                        error.should.be.equal(err);
+                        done();
+                    });
+                emitter.emit('end');
+            });
+
+            it('should throw exception on non-function arguments', function () {
+                expect(function () {
+                    emitter.mapAsync(function () {}, 2);
+                }).to.throw(TypeError, /Argument must be a function/);
+            });
+
+            it('should call each map function and return results in order', function (done) {
+                var f1 = function (a1, a2, cb) {
+                    cb(null, a1 + a2);
+                };
+                var f2 = function (a1, a2, cb) {
+                    cb(null, a1 * a2);
+                };
+
+                var r = emitter.mapAsync(f1, f2);
+                r.on('end', function (r1, r2) {
+                    r1.should.be.equal(6);
+                    r2.should.be.equal(8);
+                    done();
+                });
+                emitter.emit('end', 4, 2);
+            });
+
+        });
+
         describe('#flatMap()', function () {
 
             it('should set this to emitter', function (done) {
