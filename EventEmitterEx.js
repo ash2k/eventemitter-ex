@@ -97,8 +97,7 @@
                     return Array.isArray(res) ? res : [res];
                 });
                 // flatten the array
-                result = [].concat.apply([], result);
-                result.unshift('end');
+                result = [].concat.apply(['end'], result);
             } catch (err) {
                 eex.emit('error', err);
                 return;
