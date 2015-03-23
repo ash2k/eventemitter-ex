@@ -5,7 +5,8 @@
   "main": "EventEmitterEx.js",
   "scripts": {
     "spec": "mocha test",
-    "test": "jshint --exclude-path=.gitignore . && mocha test"
+    "test": "jshint --exclude-path=.gitignore . && mocha test",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,8 @@
   "license": "Apache 2",
   "devDependencies": {
     "chai": "2.x.x",
+    "coveralls": "^2.x.x",
+    "istanbul": "^0.x.x",
     "jshint": "2.x.x",
     "mocha": "2.x.x",
     "sinon": "1.x.x",
