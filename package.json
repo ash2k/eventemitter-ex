@@ -23,7 +23,9 @@
     "stream",
     "events",
     "pipe",
-    "extensions"
+    "extensions",
+    "map",
+    "flatMap"
   ],
   "author": "Mikhail Mazurskiy <mikhail.mazursky@gmail.com> (ash2k.com)",
   "license": "Apache 2",
