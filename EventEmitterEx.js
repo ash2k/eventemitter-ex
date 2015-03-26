@@ -47,6 +47,13 @@
         return this;
     };
 
+    EventEmitterEx.prototype.startPipeline = function startPipeline (/* arguments */) {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('end');
+
+        return this.emitAsync.apply(this, args);
+    };
+
     EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
         var self = this,
             except = Array.prototype.slice.call(arguments, 1);

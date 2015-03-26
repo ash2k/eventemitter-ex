@@ -58,6 +58,31 @@
 
         });
 
+        describe('#startPipeline()', function () {
+
+            it('should call emitAsync() with "end" event type', function () {
+                var A = 42, B = 17, mockEmitter = sinon.mock(emitter);
+
+                mockEmitter
+                    .expects('emitAsync')
+                    .withExactArgs('end', A, B);
+
+                emitter.startPipeline(A, B);
+            });
+
+            it('should return self', function () {
+                var mockEmitter = sinon.mock(emitter);
+
+                mockEmitter
+                    .expects('emitAsync')
+                    .withExactArgs('end')
+                    .returnsThis();
+
+                emitter.startPipeline().should.be.equal(emitter);
+            });
+
+        });
+
         describe('#pipeExcept()', function () {
 
             var i = 0;
