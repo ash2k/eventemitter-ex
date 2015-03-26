@@ -85,6 +85,12 @@
 
         describe('#pipeExcept()', function () {
 
+            it('should throw on invalid argument', function () {
+                expect(function () {
+                    emitter.pipeExcept({});
+                }).to.throw(TypeError, /Expecting EventEmitter or EventEmitterEx/);
+            });
+
             var i = 0;
             [EventEmitter, EEX].forEach(function (SourceType) {
                 i++;
