@@ -429,9 +429,26 @@
                 }).to.throw(TypeError, /Argument must be a function/);
             });
 
-            it('should call each map function and return results in order', function (done) {
+            it('should call each map function and return results in order (sync)', function (done) {
                 var f1 = function (a1, a2, cb) {
                     cb(null, a1 + a2);
+                };
+                var f2 = function (a1, a2, cb) {
+                    cb(null, a1 * a2);
+                };
+
+                var r = emitter.mapAsync(f1, f2);
+                r.on('end', function (r1, r2) {
+                    r1.should.be.equal(6);
+                    r2.should.be.equal(8);
+                    done();
+                });
+                emitter.emit('end', 4, 2);
+            });
+
+            it('should call each map function and return results in order (async)', function (done) {
+                var f1 = function (a1, a2, cb) {
+                    setImmediate(cb.bind(null, null, a1 + a2));
                 };
                 var f2 = function (a1, a2, cb) {
                     cb(null, a1 * a2);

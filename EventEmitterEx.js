@@ -127,19 +127,20 @@
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
-            var result = [], firstError, len = funcs.length;
-            var endArgs = Array.prototype.slice.call(arguments);
-            endArgs.push(callback);
+            var result = [], firstError, len = funcs.length, lenLoop = len;
+            var endArgs = Array.prototype.slice.call(arguments),
+                endArgsLen = endArgs.length;
 
-            funcs.forEach(function (f) {
-                f.apply(eex, endArgs);
-            });
+            for (var i = 0; i < lenLoop; i++) {
+                endArgs[endArgsLen] = callback.bind(null, i);
+                funcs[i].apply(eex, endArgs);
+            }
 
-            function callback (err/* arguments */) {
+            function callback (position, err/* arguments */) {
                 if (err) {
                     firstError = firstError || err;
                 } else {
-                    result.push(Array.prototype.slice.call(arguments, 1));
+                    result[position] = Array.prototype.slice.call(arguments, 2);
                 }
                 len--;
                 assert(len >= 0, 'Callback called more than once for each mapAsync() function!');
