@@ -354,7 +354,19 @@
                     cb(null);
                     expect(function () {
                         cb(null);
-                    }).to.throw(Error, 'Callback called more than once for each mapAsync() function!');
+                    }).to.throw(Error, 'Callback called more than once by function at position 0 (0-based)');
+                    done();
+                });
+                mapped.on('error', done);
+                emitter.emit('end');
+            });
+
+            it('should throw if callback called too many times (with misbehaving callback)', function (done) {
+                var mapped = emitter.mapAsync(function () {/* bad function, does not call cb() */}, function (cb) {
+                    cb(null);
+                    expect(function () {
+                        cb(null);
+                    }).to.throw(Error, 'Callback called more than once by function at position 1 (0-based)');
                     done();
                 });
                 mapped.on('error', done);

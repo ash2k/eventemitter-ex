@@ -138,13 +138,16 @@
             }
 
             function callback (position, err/* arguments */) {
+                assert(! Array.isArray(result[position]),
+                    'Callback called more than once by function at position ' + position + ' (0-based)');
+
                 if (err) {
                     firstError = firstError || err;
+                    result[position] = [];
                 } else {
                     result[position] = slice(arguments, 2);
                 }
                 len--;
-                assert(len >= 0, 'Callback called more than once for each mapAsync() function!');
                 if (! len) {
                     if (firstError) {
                         eex.emit('error', firstError);
