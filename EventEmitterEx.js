@@ -162,14 +162,52 @@
         return eex;
     };
 
-    EventEmitterEx.prototype.flatMap = function flatMap (f) {
-        assertIsFunction(f);
+    EventEmitterEx.prototype.flatMap = function flatMap (/* arguments */) {
+        var eex = new EventEmitterEx(),
+            funcs = slice(arguments);
 
-        var eex = new EventEmitterEx();
+        funcs.forEach(assertIsFunction);
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
-            eex.pipeExcept(f.apply(eex, arguments));
+            var result = [], firstError, len = funcs.length, lenLoop = len;
+
+            for (var i = 0; i < lenLoop; i++) {
+                var e = funcs[i].apply(eex, arguments);
+                eex.pipeExcept(e, 'end', 'error');
+                e.on('end', endListener.bind(null, i));
+                e.on('error', errorListener.bind(null, i));
+            }
+
+            function checkUsage (position) {
+                assert(! Array.isArray(result[position]),
+                    'end/error (or both) event emitted more than once by emitter at position ' + position + ' (0-based)');
+            }
+
+            function endListener (position/* arguments */) {
+                checkUsage(position);
+                result[position] = slice(arguments, 1);
+                maybeNext();
+            }
+
+            function errorListener (position, err) {
+                checkUsage(position);
+                firstError = firstError || err;
+                result[position] = [];
+                maybeNext();
+            }
+
+            function maybeNext () {
+                len--;
+                if (! len) {
+                    if (firstError) {
+                        eex.emit('error', firstError);
+                    } else {
+                        // flatten the array
+                        eex.emit.apply(eex, [].concat.apply(['end'], result));
+                    }
+                }
+            }
         });
 
         return eex;

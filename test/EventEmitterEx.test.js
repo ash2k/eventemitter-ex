@@ -495,6 +495,93 @@
                 emitter.emit('end');
             });
 
+            it('should throw if emitter emit end more than once', function () {
+                var e = new EEX();
+                emitter
+                    .flatMap(function () {
+                        return e;
+                    });
+                emitter.emit('end');
+                e.emit('end');
+                expect(function () {
+                    e.emit('end');
+                }).to.throw(Error, 'end/error (or both) event emitted more than once by emitter at position 0 (0-based)');
+            });
+
+            it('should throw if emitter emit error more than once', function () {
+                var e = new EEX();
+                emitter
+                    .flatMap(function () {
+                        return e;
+                    })
+                    .on('error', function () {
+                        // ignore
+                    });
+                emitter.emit('end');
+                e.emit('error', new Error('123'));
+                expect(function () {
+                    e.emit('error', new Error('234'));
+                }).to.throw(Error, 'end/error (or both) event emitted more than once by emitter at position 0 (0-based)');
+            });
+
+            it('should throw if emitter emit end and error', function () {
+                var e = new EEX();
+                emitter
+                    .flatMap(function () {
+                        return e;
+                    });
+                emitter.emit('end');
+                e.emit('end');
+                expect(function () {
+                    e.emit('error', new Error('234'));
+                }).to.throw(Error, 'end/error (or both) event emitted more than once by emitter at position 0 (0-based)');
+            });
+
+            it('should collect results and emit all together in order', function (done) {
+                var A = 1, B = 40, C = 2, e = new EEX();
+                emitter
+                    .flatMap(
+                    function () {
+                        return e;
+                    },
+                    function () {
+                        return new EEX()
+                            .startPipeline(C)
+                            .on('end', function () { e.startPipeline(A, B); } );
+                    })
+                    .on('end', function (r1, r2, r3, r4) {
+                        r1.should.be.equal(A);
+                        r2.should.be.equal(B);
+                        r3.should.be.equal(C);
+                        expect(r4).to.be.undefined;
+                        done();
+                    })
+                    .on('error', done);
+                emitter.emit('end');
+            });
+
+            it('should emit error after all emitters finished', function (done) {
+                var e = new EEX(), error = new Error('error!');
+                emitter
+                    .flatMap(
+                    function () {
+                        return e;
+                    },
+                    function () {
+                        return new EEX()
+                            .startPipeline()
+                            .on('end', e.emit.bind(e, 'error', error));
+                    })
+                    .on('end', function () {
+                        fail('end emitted', 'end emitted');
+                    })
+                    .on('error', function (err) {
+                        err.should.be.equal(error);
+                        done();
+                    });
+                emitter.emit('end');
+            });
+
             it('should throw exception on non-function arguments', function () {
                 expect(function () {
                     emitter.flatMap(42);
