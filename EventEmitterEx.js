@@ -3,7 +3,8 @@
 
     var EE = require('events').EventEmitter,
         util = require('util'),
-        assert = require('assert');
+        assert = require('assert'),
+        slice = Function.prototype.call.bind(Array.prototype.slice);
 
     module.exports = EventEmitterEx;
 
@@ -16,7 +17,7 @@
     EventEmitterEx.prototype.onAllExcept = function onAllExcept (f /* arguments */) {
         assertIsFunction(f);
 
-        var except = Array.prototype.slice.call(arguments, 1);
+        var except = slice(arguments, 1);
         this._onAllListeners.push([f, except]);
     };
 
@@ -48,7 +49,7 @@
     };
 
     EventEmitterEx.prototype.startPipeline = function startPipeline (/* arguments */) {
-        var args = Array.prototype.slice.call(arguments);
+        var args = slice(arguments);
         args.unshift('end');
 
         return this.emitAsync.apply(this, args);
@@ -56,7 +57,7 @@
 
     EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
         var self = this,
-            except = Array.prototype.slice.call(arguments, 1);
+            except = slice(arguments, 1);
 
         if (typeof ee.onAllExcept === 'function') {
             // This is an EventEmitterEx
@@ -69,7 +70,7 @@
             var emit = ee.emit;
             if (except.indexOf('error') === -1) {
                 ee.on('error', function (/* arguments */) {
-                    var args = Array.prototype.slice.call(arguments);
+                    var args = slice(arguments);
                     args.unshift('error');
                     self.emit.apply(self, args);
                 });
@@ -91,7 +92,7 @@
 
     EventEmitterEx.prototype.map = function map (/* arguments */) {
         var eex = new EventEmitterEx(),
-            mapArgs = Array.prototype.slice.call(arguments);
+            mapArgs = slice(arguments);
 
         mapArgs.forEach(assertIsFunction);
 
@@ -121,14 +122,14 @@
     // had called the callback, results are emitted.
     EventEmitterEx.prototype.mapAsync = function mapAsync (/* arguments */) {
         var eex = new EventEmitterEx(),
-            funcs = Array.prototype.slice.call(arguments);
+            funcs = slice(arguments);
 
         funcs.forEach(assertIsFunction);
 
         eex.pipeExcept(this, 'end');
         this.on('end', function (/* arguments */) {
             var result = [], firstError, len = funcs.length, lenLoop = len;
-            var endArgs = Array.prototype.slice.call(arguments),
+            var endArgs = slice(arguments),
                 endArgsLen = endArgs.length;
 
             for (var i = 0; i < lenLoop; i++) {
@@ -140,7 +141,7 @@
                 if (err) {
                     firstError = firstError || err;
                 } else {
-                    result[position] = Array.prototype.slice.call(arguments, 2);
+                    result[position] = slice(arguments, 2);
                 }
                 len--;
                 assert(len >= 0, 'Callback called more than once for each mapAsync() function!');
