@@ -4,7 +4,8 @@
     var EE = require('events').EventEmitter,
         util = require('util'),
         assert = require('assert'),
-        slice = Function.prototype.call.bind(Array.prototype.slice);
+        slice = Function.prototype.call.bind(Array.prototype.slice),
+        concat = Array.prototype.concat;
 
     module.exports = EventEmitterEx;
 
@@ -106,7 +107,7 @@
                     return Array.isArray(res) ? res : [res];
                 });
                 // flatten the array
-                result = [].concat.apply(['end'], result);
+                result = concat.apply(['end'], result);
             } catch (err) {
                 eex.emit('error', err);
                 return;
@@ -153,7 +154,7 @@
                         eex.emit('error', firstError);
                     } else {
                         // flatten the array
-                        eex.emit.apply(eex, [].concat.apply(['end'], result));
+                        eex.emit.apply(eex, concat.apply(['end'], result));
                     }
                 }
             }
@@ -204,7 +205,7 @@
                         eex.emit('error', firstError);
                     } else {
                         // flatten the array
-                        eex.emit.apply(eex, [].concat.apply(['end'], result));
+                        eex.emit.apply(eex, concat.apply(['end'], result));
                     }
                 }
             }
