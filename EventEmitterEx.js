@@ -15,10 +15,11 @@
     }
     util.inherits(EventEmitterEx, EE);
 
-    EventEmitterEx.prototype.onAllExcept = function onAllExcept (f /* arguments */) {
+    EventEmitterEx.prototype.onAllExcept = function onAllExcept (/* arguments */) {
+        var f = arguments[arguments.length - 1];
         assertIsFunction(f);
 
-        var except = slice(arguments, 1);
+        var except = slice(arguments, 0, -1);
         this._onAllListeners.push([f, except]);
 
         return this;
@@ -58,17 +59,18 @@
         return this.emitAsync.apply(this, args);
     };
 
-    EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
+    EventEmitterEx.prototype.pipeExcept = function pipeExcept (/* arguments */) {
+        var ee = arguments[arguments.length - 1];
         if (! (ee instanceof EE)) {
             throw new TypeError('Expecting EventEmitter or EventEmitterEx. Given: ' + typeof ee);
         }
 
         var self = this,
-            except = slice(arguments, 1);
+            except = slice(arguments, 0, -1);
 
         if (typeof ee.onAllExcept === 'function') {
             // This is an EventEmitterEx
-            except.unshift(function (/* arguments */) {
+            except.push(function (/* arguments */) {
                 self.emit.apply(self, arguments);
             });
             ee.onAllExcept.apply(ee, except);
@@ -101,7 +103,7 @@
 
         mapArgs.forEach(assertIsFunction);
 
-        eex.pipeExcept(this, 'end');
+        eex.pipeExcept('end', this);
         this.on('end', function (/* arguments */) {
             var result;
             try {
@@ -131,7 +133,7 @@
 
         funcs.forEach(assertIsFunction);
 
-        eex.pipeExcept(this, 'end');
+        eex.pipeExcept('end', this);
         this.on('end', function (/* arguments */) {
             var result = [], firstError, len = funcs.length, lenLoop = len;
             var endArgs = slice(arguments),
@@ -174,13 +176,13 @@
 
         funcs.forEach(assertIsFunction);
 
-        eex.pipeExcept(this, 'end');
+        eex.pipeExcept('end', this);
         this.on('end', function (/* arguments */) {
             var result = [], firstError, len = funcs.length, lenLoop = len;
 
             for (var i = 0; i < lenLoop; i++) {
                 var e = funcs[i].apply(eex, arguments);
-                eex.pipeExcept(e, 'end', 'error');
+                eex.pipeExcept('end', 'error', e);
                 e.on('end', endListener.bind(null, i));
                 e.on('error', errorListener.bind(null, i));
             }

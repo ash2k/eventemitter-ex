@@ -90,7 +90,7 @@ var eex = new EEX()
 84
 ```
 
-#### pipeExcept(emitter[, event, ...])
+#### pipeExcept([event, ..., ]emitter)
 
 You can pipe one or more emitters into `EEX` emitter. Events from source(s) will be fired on the target emitter.
 
@@ -111,7 +111,7 @@ It is possible to specify exceptions - events that will not be piped:
 
 ```javascript
 var eex = new EEX()
-    .pipeExcept(numbers(), 'data')
+    .pipeExcept('data', numbers())
     .on('data', console.log)
     .on('end', console.log);
 

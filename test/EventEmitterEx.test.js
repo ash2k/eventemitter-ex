@@ -15,7 +15,7 @@
         describe('#onAllExcept()', function () {
 
             it('should return self', function () {
-                emitter.onAllExcept(function () {}, 'data').should.be.equal(emitter);
+                emitter.onAllExcept('data', function () {}).should.be.equal(emitter);
             });
 
         });
@@ -123,7 +123,7 @@
                     source.on('end', spyEnd);
                     source.on('error', spyError1);
 
-                    emitter.pipeExcept(source, 'end');
+                    emitter.pipeExcept('end', source);
 
                     emitter.on('error', spyError2);
 
@@ -150,7 +150,7 @@
 
                     source.on('error', spyError1);
 
-                    emitter.pipeExcept(source, 'end', 'x');
+                    emitter.pipeExcept('end', 'x', source);
 
                     emitter.on('a', spyA);
                     emitter.on('end', spyEnd);
@@ -202,7 +202,7 @@
                         spyError2 = sinon.spy(),
                         err = new Error('123');
 
-                    emitter.pipeExcept(source, 'error');
+                    emitter.pipeExcept('error', source);
 
                     source.on('error', spyError1);
                     emitter.on('error', spyError2);
@@ -217,7 +217,7 @@
                     var spyError = sinon.spy(),
                         err = new Error('123');
 
-                    emitter.pipeExcept(source, 'error');
+                    emitter.pipeExcept('error', source);
 
                     source.on('error', spyError);
 
