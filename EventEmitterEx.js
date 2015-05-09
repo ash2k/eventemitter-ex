@@ -57,6 +57,10 @@
     };
 
     EventEmitterEx.prototype.pipeExcept = function pipeExcept (ee) {
+        if (! (ee instanceof EE)) {
+            throw new TypeError('Expecting EventEmitter or EventEmitterEx. Given: ' + typeof ee);
+        }
+
         var self = this,
             except = slice(arguments, 1);
 
@@ -66,7 +70,7 @@
                 self.emit.apply(self, arguments);
             });
             ee.onAllExcept.apply(ee, except);
-        } else if (typeof ee.emit === 'function') {
+        } else {
             // This is a usual EventEmitter
             var emit = ee.emit;
             if (except.indexOf('error') === -1) {
@@ -85,8 +89,6 @@
                 }
                 return  res;
             };
-        } else {
-            throw new TypeError('Expecting EventEmitter or EventEmitterEx. Given: ' + typeof ee);
         }
         return this;
     };
