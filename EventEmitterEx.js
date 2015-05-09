@@ -146,16 +146,17 @@
                 assert(! Array.isArray(result[position]),
                     'Callback called more than once by function at position ' + position + ' (0-based)');
 
-                if (err) {
-                    firstError = firstError || err;
-                    result[position] = [];
-                } else {
+                if (err === null) {
                     result[position] = slice(arguments, 2);
+                } else {
+                    if (! firstError) firstError = slice(arguments, 1);
+                    result[position] = [];
                 }
                 len--;
                 if (! len) {
                     if (firstError) {
-                        eex.emit('error', firstError);
+                        firstError.unshift('error');
+                        eex.emit.apply(eex, firstError);
                     } else {
                         // flatten the array
                         eex.emit.apply(eex, concat.apply(['end'], result));

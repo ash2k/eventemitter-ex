@@ -357,6 +357,67 @@
 
         describe('#mapAsync()', function () {
 
+            it('should emit error if no arguments passed to callback', function (done) {
+                var mapped = emitter.mapAsync(function (cb) {
+                    cb();
+                });
+                mapped.on('error', function () {
+                    done();
+                });
+                mapped.on('end', function () { throw new Error('Should not emit end'); });
+                emitter.emit('end');
+            });
+
+            // this is to check type strictness of the err check
+            it('should emit error on false as first argument to callback', function (done) {
+                var A = 1, B = 40, C = 2;
+                var mapped = emitter.mapAsync(function (cb) {
+                    cb(false, A, B, C);
+                });
+                mapped.on('error', function (err, a, b, c) {
+                    err.should.be.false;
+                    a.should.be.equal(A);
+                    b.should.be.equal(B);
+                    c.should.be.equal(C);
+                    done();
+                });
+                mapped.on('end', function () { throw new Error('Should not emit end'); });
+                emitter.emit('end');
+            });
+
+            // this is to check type strictness of the err check
+            it('should emit error on true as first argument to callback', function (done) {
+                var A = 1, B = 40, C = 2;
+                var mapped = emitter.mapAsync(function (cb) {
+                    cb(true, A, B, C);
+                });
+                mapped.on('error', function (err, a, b, c) {
+                    err.should.be.true;
+                    a.should.be.equal(A);
+                    b.should.be.equal(B);
+                    c.should.be.equal(C);
+                    done();
+                });
+                mapped.on('end', function () { throw new Error('Should not emit end'); });
+                emitter.emit('end');
+            });
+
+            // this is to check type strictness of the err check
+            it('should emit end on null as first argument to callback', function (done) {
+                var A = 1, B = 40, C = 2;
+                var mapped = emitter.mapAsync(function (cb) {
+                    cb(null, A, B, C);
+                });
+                mapped.on('error', function () { throw new Error('Should not emit error'); });
+                mapped.on('end', function (a, b, c) {
+                    a.should.be.equal(A);
+                    b.should.be.equal(B);
+                    c.should.be.equal(C);
+                    done();
+                });
+                emitter.emit('end');
+            });
+
             it('should throw if callback called too many times', function (done) {
                 var mapped = emitter.mapAsync(function (cb) {
                     cb(null);
