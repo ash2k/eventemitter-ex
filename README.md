@@ -1,7 +1,5 @@
 # eventemitter-ex
 
-Node.js EventEmitter Extensions
-
 [![NPM](https://nodei.co/npm/eventemitter-ex.png)](https://npmjs.org/package/eventemitter-ex)
 
 [![NPM](https://nodei.co/npm-dl/eventemitter-ex.png)](https://nodei.co/npm-dl/eventemitter-ex/)
