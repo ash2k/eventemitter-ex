@@ -12,6 +12,14 @@
 
     describe('EventEmitterEx', function () {
 
+        describe('#onAllExcept()', function () {
+
+            it('should return self', function () {
+                emitter.onAllExcept(function () {}, 'data').should.be.equal(emitter);
+            });
+
+        });
+
         describe('#startAsync()', function () {
 
             it('should throw exception on non-function arguments', function () {

@@ -20,6 +20,8 @@
 
         var except = slice(arguments, 1);
         this._onAllListeners.push([f, except]);
+
+        return this;
     };
 
     EventEmitterEx.prototype.emit = function emit (type /* arguments */) {
