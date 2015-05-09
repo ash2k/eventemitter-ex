@@ -134,6 +134,54 @@ console.log(eex.listenersOnAll('end').length);
 0
 ```
 
+#### listenerCountOnAll(event)
+
+Returns number of listeners attached via `onAllExcept()` that will be triggered for the specified type of event.
+
+```javascript
+var eex = new EEX()
+    .onAllExcept('end', console.log);
+console.log(eex.listenerCountOnAll('data'));
+console.log(eex.listenerCountOnAll('end'));
+
+// will print
+1
+0
+```
+
+#### EEX.listenerCount(emitter, event)
+
+Returns the number of listeners for a given event for the given emitter. Same as
+[EventEmitter.listenerCount()](https://nodejs.org/api/events.html#events_class_method_eventemitter_listenercount_emitter_event)
+but also understands objects of `EEX` type and takes into account listeners, attached via `onAllExcept()`.
+
+```javascript
+var eex = new EEX()
+    .onAllExcept('data', console.log)
+    .onAllExcept('end', console.log)
+    .on('end', function () {});
+
+console.log(EEX.listenerCount(eex, 'end'));
+
+// will print
+2
+```
+
+#### EEX.startAsync(function)
+
+Returns new `EEX` which will be provided to the function asynchronously.
+
+```javascript
+var eex = EEX
+    .startAsync(function (e) {
+        e.emit('end', 42);
+    })
+    .on('end', console.log);
+
+// will print
+42
+```
+
 ### Chaining emitters
 
 `end` event from emitter is triggering next stage of execution, defined by `map()`/`mapAsync()`/`flatMap()` operation. Payload of `end` event is passed as argument(s) to the next stage. `error` event terminates the pipeline by bubbling up through the chain of emitters, triggering `error` listeners.
