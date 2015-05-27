@@ -716,7 +716,7 @@ describe('EventEmitterEx', function () {
                     ERR = new Error('Something fishy just happened!');
 
                 emitter
-                    .flatMap(function (a, b, c) {
+                    .flatMap(function (a /* , b, c */) {
                         var emitter2 = new SourceType();
 
                         setImmediate(function () {
