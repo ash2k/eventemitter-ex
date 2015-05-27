@@ -3,7 +3,6 @@
 
 var EventEmitter = require('events').EventEmitter,
     EEX = require('../EventEmitterEx'),
-    co = require('co'),
     emitter;
 
 beforeEach(function () {
@@ -40,9 +39,7 @@ describe('EventEmitterEx', function () {
                 var p = EEX.asPromise(e);
                 var A = 42;
 
-                co(function* () {
-                    return yield p;
-                }).then(function (value) {
+                p.then(function (value) {
                     value.should.equals(A);
                     done();
                 }, done);
@@ -55,9 +52,7 @@ describe('EventEmitterEx', function () {
                 var p = EEX.asPromise(e);
                 var ERR = new Error('Something fishy just happened!');
 
-                co(function* () {
-                    return yield p;
-                }).then(function () {
+                p.then(function () {
                     done(new Error('What?'));
                 }, function (err) {
                     err.should.equals(ERR);
@@ -800,9 +795,7 @@ describe('instance', function () {
         it('should return a Promise that is bound to end event', function (done) {
             var A = 42;
 
-            co(function* () {
-                return yield p;
-            }).then(function (value) {
+            p.then(function (value) {
                 value.should.equals(A);
                 done();
             }, done);
@@ -813,9 +806,7 @@ describe('instance', function () {
         it('should return a Promise that is bound to error event', function (done) {
             var ERR = new Error('Something fishy just happened!');
 
-            co(function* () {
-                return yield p;
-            }).then(function () {
+            p.then(function () {
                 done(new Error('What?'));
             }, function (err) {
                 err.should.equals(ERR);

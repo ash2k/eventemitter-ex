@@ -32,7 +32,6 @@
   "devDependencies": {
     "chai": "2.x.x",
     "coveralls": "^2.x.x",
-    "co": "^4.x.x",
     "istanbul": "^0.x.x",
     "jshint": "2.x.x",
     "mocha": "2.x.x",
