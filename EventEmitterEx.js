@@ -234,6 +234,10 @@ EventEmitterEx.prototype.listenerCountOnAll = function listenerCountOnAll (type)
     return this.listenersOnAll(type).length;
 };
 
+EventEmitterEx.prototype.asPromise = function asPromise () {
+    return EventEmitterEx.asPromise(this);
+};
+
 EventEmitterEx.listenerCount = function listenerCount (eex, type) {
     return (typeof eex.listenerCountOnAll === 'function' ? eex.listenerCountOnAll(type) : 0) +
         EE.listenerCount(eex, type);
@@ -251,6 +255,16 @@ EventEmitterEx.startAsync = function startAsync (f) {
     setImmediate(f.bind(null, r));
 
     return r;
+};
+
+EventEmitterEx.asPromise = function asPromise (emitter) {
+    return new Promise(function (resolve, reject) {
+        emitter.on('error', reject);
+        emitter.on('end', function (value) {
+            // we only consume the first argument
+            resolve(value);
+        });
+    });
 };
 
 function assertIsFunction (f) {

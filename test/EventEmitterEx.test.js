@@ -3,6 +3,7 @@
 
 var EventEmitter = require('events').EventEmitter,
     EEX = require('../EventEmitterEx'),
+    co = require('co'),
     emitter;
 
 beforeEach(function () {
@@ -741,6 +742,46 @@ describe('EventEmitterEx', function () {
                 emitter.emit('msg', MSG);
                 emitter.emit('end', A, B, C);
             });
+        });
+    });
+
+    describe('#asPromise()', function () {
+
+        var i = 0;
+        [EventEmitter, EEX].forEach(function (SourceType) {
+            i++;
+            it('should return a Promise that is bound to end event #' + i, function (done) {
+                var e = new SourceType();
+                var p = EEX.asPromise(e);
+                var A = 42;
+
+                co(function* () {
+                    return yield p;
+                }).then(function (value) {
+                    value.should.equals(A);
+                    done();
+                }, done);
+
+                setImmediate(e.emit.bind(e, 'end', A));
+            });
+
+            it('should return a Promise that is bound to error event #' + i, function (done) {
+                var e = new SourceType();
+                var p = EEX.asPromise(e);
+                var ERR = new Error('Something fishy just happened!');
+
+                co(function* () {
+                    return yield p;
+                }).then(function () {
+                    done(new Error('What?'));
+                }, function (err) {
+                    err.should.equals(ERR);
+                    done();
+                });
+
+                setImmediate(e.emit.bind(e, 'error', ERR));
+            });
+
         });
     });
 

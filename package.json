@@ -4,8 +4,8 @@
   "description": "EventEmitter extensions",
   "main": "EventEmitterEx.js",
   "scripts": {
-    "spec": "mocha test",
-    "test": "jshint --exclude-path=.gitignore . && mocha test",
+    "spec": "mocha --harmony test",
+    "test": "jshint --exclude-path=.gitignore . && mocha --harmony test",
     "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage"
   },
   "repository": {
@@ -32,6 +32,7 @@
   "devDependencies": {
     "chai": "2.x.x",
     "coveralls": "^2.x.x",
+    "co": "^4.x.x",
     "istanbul": "^0.x.x",
     "jshint": "2.x.x",
     "mocha": "2.x.x",

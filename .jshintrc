@@ -14,5 +14,6 @@
     "mocha"         : true,
     "latedef"       : "nofunc",
     "globals"       : { "sinon": false, "expect": false, "fail": false },
+    "esnext"        : true,
     "node"          : true
 }
