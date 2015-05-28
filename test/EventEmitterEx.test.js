@@ -65,6 +65,36 @@ describe('EventEmitterEx', function () {
         });
     });
 
+    describe('#fromPromise()', function () {
+
+        it('should emit end when promise is resolved', function (done) {
+            var p = Promise.resolve(42);
+            var eex = EEX.fromPromise(p);
+            eex
+                .on('end', function (res) {
+                    res.should.equal(42);
+                    done();
+                })
+                .on('error', done);
+        });
+
+        it('should emit error when promise is rejected', function (done) {
+            var ERROR = new Error('Boom!');
+            var p = Promise.reject(ERROR);
+            var eex = EEX.fromPromise(p);
+
+            eex
+                .on('error', function (err) {
+                    err.should.equal(ERROR);
+                    done();
+                })
+                .on('end', function () {
+                    done(new Error('WTF?'));
+                });
+        });
+
+    });
+
 });
 
 describe('instance', function () {
