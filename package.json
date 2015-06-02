@@ -28,7 +28,7 @@
     "flatMap"
   ],
   "author": "Mikhail Mazurskiy <mikhail.mazursky@gmail.com> (ash2k.com)",
-  "license": "Apache 2",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "2.x.x",
     "coveralls": "^2.x.x",
