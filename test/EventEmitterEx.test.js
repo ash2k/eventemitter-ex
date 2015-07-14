@@ -405,6 +405,61 @@ describe('instance', function () {
 
     });
 
+    describe('#pipeAsPromise()', function () {
+
+        var i = 0;
+        [EventEmitter, EEX].forEach(function (SourceType) {
+            i++;
+            it('should return a Promise that resolves on end event #' + i, function (done) {
+                var e = new SourceType(), A = 45;
+
+                emitter
+                    .on('end', function () { done(new Error('WTF?')); })
+                    .on('error', done)
+                    .pipeAsPromise(e)
+                    .then(function (value) {
+                        value.should.equals(A);
+                        done();
+                    }, done);
+
+                e.emit('end', A);
+            });
+
+            it('should return a Promise that rejects on error event #' + i, function (done) {
+                var e = new SourceType(), error = new Error('123');
+
+                emitter
+                    .on('end', function () { done(new Error('WTF??')); })
+                    .on('error', done)
+                    .pipeAsPromise(e)
+                    .then(function () {
+                        done(new Error('WTF?'));
+                    }, function (err) {
+                        err.should.be.equal(error);
+                        done();
+                    });
+
+                e.emit('error', error);
+            });
+
+            it('should pipe events #' + i, function (done) {
+                var e = new SourceType(), A = 45;
+
+                emitter
+                    .on('data', function (data) {
+                        data.should.be.equal(A);
+                        done();
+                    })
+                    .on('end', function () { done(new Error('WTF??')); })
+                    .on('error', done)
+                    .pipeAsPromise(e);
+
+                e.emit('data', A);
+            });
+
+        });
+    });
+
     describe('#map()', function () {
 
         it('should set this to emitter', function (done) {

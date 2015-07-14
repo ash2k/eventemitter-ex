@@ -96,6 +96,11 @@ EventEmitterEx.prototype.pipeExcept = function pipeExcept (/* arguments */) {
     return this;
 };
 
+EventEmitterEx.prototype.pipeAsPromise = function pipeAsPromise (emitter) {
+    this.pipeExcept('end', 'error', emitter);
+    return EventEmitterEx.asPromise(emitter);
+};
+
 EventEmitterEx.prototype.map = function map (/* arguments */) {
     var eex = new EventEmitterEx(),
         mapArgs = slice(arguments);
