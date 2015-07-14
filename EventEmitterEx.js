@@ -275,6 +275,16 @@ EventEmitterEx.fromPromise = function fromPromise (promise) {
     return eex;
 };
 
+EventEmitterEx.fromPromiseFunc = function fromPromiseFunc (f) {
+    var eex = new EventEmitterEx();
+
+    setImmediate(function () {
+        f(eex).then(eex.emit.bind(eex, 'end'), eex.emit.bind(eex, 'error'));
+    });
+
+    return eex;
+};
+
 function assertIsFunction (f) {
     if (typeof f !== 'function')
         throw new TypeError('Argument must be a function. Got ' + typeof f);

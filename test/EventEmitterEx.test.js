@@ -95,6 +95,52 @@ describe('EventEmitterEx', function () {
 
     });
 
+    describe('#fromPromiseFunc()', function () {
+
+        it('should emit end when promise is resolved', function (done) {
+            var eex = EEX.fromPromiseFunc(function () {
+                return Promise.resolve(42);
+            });
+            eex
+                .on('end', function (res) {
+                    res.should.equal(42);
+                    done();
+                })
+                .on('error', done);
+        });
+
+        it('should emit error when promise is rejected', function (done) {
+            var ERROR = new Error('Boom!');
+            var eex = EEX.fromPromiseFunc(function () {
+                return Promise.reject(ERROR);
+            });
+
+            eex
+                .on('error', function (err) {
+                    err.should.equal(ERROR);
+                    done();
+                })
+                .on('end', function () {
+                    done(new Error('WTF?'));
+                });
+        });
+
+        it('should pass emitter as argument', function (done) {
+            var A = 34;
+            var eex = EEX.fromPromiseFunc(function (em) {
+                em.emit('data', A);
+                return Promise.resolve(42);
+            });
+            eex
+                .on('data', function (a) {
+                    a.should.be.equal(A);
+                    done();
+                })
+                .on('error', done);
+        });
+
+    });
+
 });
 
 describe('instance', function () {
