@@ -281,6 +281,8 @@ EventEmitterEx.fromPromise = function fromPromise (promise) {
 };
 
 EventEmitterEx.fromPromiseFunc = function fromPromiseFunc (f) {
+    assertIsFunction(f);
+
     var eex = new EventEmitterEx();
 
     setImmediate(function () {

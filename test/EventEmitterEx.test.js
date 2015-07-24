@@ -97,6 +97,12 @@ describe('EventEmitterEx', function () {
 
     describe('#fromPromiseFunc()', function () {
 
+        it('should throw exception on non-function argument', function () {
+            expect(function () {
+                EEX.fromPromiseFunc(123);
+            }).to.throw(TypeError, /Argument must be a function/);
+        });
+
         it('should emit end when promise is resolved', function (done) {
             var eex = EEX.fromPromiseFunc(function () {
                 return Promise.resolve(42);
