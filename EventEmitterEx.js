@@ -116,13 +116,20 @@ EventEmitterEx.prototype.map = function map (/* arguments */) {
                 var res = f.apply(eex, endArgs);
                 return Array.isArray(res) ? res : [res];
             });
+            // FIXME: wait for all promises to resolve/reject before emitting end/error
             // flatten the array
-            result = concat.apply(['end'], result);
+            Promise.all(concat.apply([], result)).then(
+                function (res) {
+                    res.unshift('end');
+                    eex.emit.apply(eex, res);
+                },
+                function (err) {
+                    eex.emit('error', err);
+                });
         } catch (err) {
             eex.emit('error', err);
             return;
         }
-        eex.emit.apply(eex, result);
     });
 
     return eex;

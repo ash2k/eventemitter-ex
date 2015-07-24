@@ -529,6 +529,49 @@ describe('instance', function () {
             emitter.emit('end', 4, 2);
         });
 
+        it('should handle function that return Promise', function (done) {
+            var A = 42;
+            var mapped = emitter.map(function () { return Promise.resolve(A); });
+            mapped
+                .on('end', function (result) {
+                    result.should.be.equal(A);
+                    done();
+                })
+                .on('error', done);
+            emitter.emit('end');
+        });
+
+        it('should handle functions that return Promise', function (done) {
+            var A = 42, B = 23;
+            var mapped = emitter.map(
+                function () { return B; },
+                function () { return Promise.resolve(A); });
+            mapped
+                .on('end', function (b, a) {
+                    b.should.be.equal(B);
+                    a.should.be.equal(A);
+                    done();
+                })
+                .on('error', done);
+            emitter.emit('end');
+        });
+
+        it('should emit error when Promise is rejected', function (done) {
+            var A = 23, E = new Error('Oops!');
+            var mapped = emitter.map(
+                function () { return A; },
+                function () { return Promise.reject(E); });
+            mapped
+                .on('end', function () {
+                    done(new Error('Unexpected end event'));
+                })
+                .on('error', function (e) {
+                    e.should.be.equal(E);
+                    done();
+                });
+            emitter.emit('end');
+        });
+
     });
 
     describe('#mapAsync()', function () {
