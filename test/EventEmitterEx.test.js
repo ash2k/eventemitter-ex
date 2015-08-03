@@ -614,14 +614,27 @@ describe('instance', function () {
 
     describe('#mapAsync()', function () {
 
-        it('should emit error if no arguments passed to callback', function (done) {
+        it('should emit error with all the arguments passed to the callback', function (done) {
+            var E = new Error('asd'), A = 23, B = 34;
+            var mapped = emitter.mapAsync(function (cb) {
+                cb(E, A, B);
+            });
+            mapped.on('error', function (err, a, b) {
+                err.should.be.equal(E);
+                a.should.be.equal(A);
+                b.should.be.equal(B);
+                done();
+            });
+            mapped.on('end', function () { done(new Error('Should not emit end')); });
+            emitter.emit('end');
+        });
+
+        it('should emit end if no arguments passed to callback', function (done) {
             var mapped = emitter.mapAsync(function (cb) {
                 cb();
             });
-            mapped.on('error', function () {
-                done();
-            });
-            mapped.on('end', function () { throw new Error('Should not emit end'); });
+            mapped.on('error', done);
+            mapped.on('end', done);
             emitter.emit('end');
         });
 
@@ -819,6 +832,24 @@ describe('instance', function () {
                 })
                 .on('error', done);
             emitter.emit('end');
+        });
+
+        it('should emit error with all the arguments passed to the callback', function (done) {
+            var error = new Error('error!'), A = 23, B = 34;
+            emitter
+                .startPipeline()
+                .flatMap(function () {
+                    return new EEX().emitAsync('error', error, A, B);
+                })
+                .on('end', function () {
+                    fail('end emitted', 'end emitted');
+                })
+                .on('error', function (err, a, b) {
+                    err.should.be.equal(error);
+                    a.should.be.equal(A);
+                    b.should.be.equal(B);
+                    done();
+                });
         });
 
         it('should throw if emitter emit end more than once', function () {

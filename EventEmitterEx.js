@@ -172,11 +172,13 @@ EventEmitterEx.prototype.mapAsync = function mapAsync (/* arguments */) {
             assert(! Array.isArray(result[position]),
                 'Callback called more than once by function at position ' + position + ' (0-based)');
 
-            if (err === null) {
-                result[position] = slice(arguments, 2);
-            } else {
-                if (! firstError) firstError = slice(arguments, 1);
+            if (isError(err)) {
+                if (! firstError) {
+                    firstError = slice(arguments, 1);
+                }
                 result[position] = [];
+            } else {
+                result[position] = slice(arguments, 2);
             }
             len--;
             if (! len) {
@@ -222,9 +224,11 @@ EventEmitterEx.prototype.flatMap = function flatMap (/* arguments */) {
             maybeNext();
         }
 
-        function errorListener (position, err) {
+        function errorListener (position/* arguments */) {
             checkUsage(position);
-            firstError = firstError || err;
+            if (! firstError) {
+                firstError = slice(arguments, 1);
+            }
             result[position] = [];
             maybeNext();
         }
@@ -233,7 +237,8 @@ EventEmitterEx.prototype.flatMap = function flatMap (/* arguments */) {
             len--;
             if (! len) {
                 if (firstError) {
-                    eex.emit('error', firstError);
+                    firstError.unshift('error');
+                    eex.emit.apply(eex, firstError);
                 } else {
                     // flatten the array
                     eex.emit.apply(eex, concat.apply(['end'], result));
