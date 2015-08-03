@@ -492,6 +492,19 @@ describe('instance', function () {
             emitter.emit('end');
         });
 
+        it('should support returning multiple values as array from Promise', function (done) {
+            var A = 1, B = 2;
+            var mapped = emitter.map(function () { return Promise.resolve([A, B]); });
+            mapped
+                .on('end', function (a, b) {
+                    a.should.be.equal(A);
+                    b.should.be.equal(B);
+                    done();
+                })
+                .on('error', done);
+            emitter.emit('end');
+        });
+
         it('should emit exceptions as error', function (done) {
             var err = new Error('234');
             emitter
@@ -553,6 +566,31 @@ describe('instance', function () {
                     done();
                 })
                 .on('error', done);
+            emitter.emit('end');
+        });
+
+        it('should emit error when a Promise is rejected and after all Promises are fulfilled', function (done) {
+            var E = new Error('Oops!'), B = 23, resolved = false;
+            var mapped = emitter.map(
+                function () { return Promise.reject(E); },
+                function () {
+                    return new Promise(function (resolve) {
+                        setTimeout(function () {
+                            resolved = true;
+                            resolve(B);
+                        }, 10);
+                    });
+                }
+            );
+            mapped
+                .on('end', function () {
+                    done(new Error('Unexpected end event'));
+                })
+                .on('error', function (e) {
+                    e.should.be.equal(E);
+                    resolved.should.be.true;
+                    done();
+                });
             emitter.emit('end');
         });
 

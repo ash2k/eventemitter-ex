@@ -109,26 +109,39 @@ EventEmitterEx.prototype.map = function map (/* arguments */) {
 
     eex.pipeExcept('end', this);
     this.on('end', function (/* arguments */) {
-        var result;
-        try {
-            var endArgs = arguments;
-            result = mapArgs.map(function (f) {
-                var res = f.apply(eex, endArgs);
-                return Array.isArray(res) ? res : [res];
-            });
-            // FIXME: wait for all promises to resolve/reject before emitting end/error
-            // flatten the array
-            Promise.all(concat.apply([], result)).then(
-                function (res) {
-                    res.unshift('end');
-                    eex.emit.apply(eex, res);
-                },
-                function (err) {
-                    eex.emit('error', err);
-                });
-        } catch (err) {
-            eex.emit('error', err);
-            return;
+        var result = [], firstError, len = mapArgs.length, lenLoop = len;
+        var endArgs = arguments;
+        for (var i = 0; i < lenLoop; i++) {
+            new Promise(invokeFunc.bind(null, mapArgs[i]))
+                .then(onResolved.bind(null, i), onRejected);
+        }
+
+        function invokeFunc (func, resolve) {
+            resolve(func.apply(eex, endArgs));
+        }
+
+        function onResolved (idx, value) {
+            result[idx] = Array.isArray(value) ? value : [value];
+            maybeFinish();
+        }
+
+        function onRejected (reason) {
+            if (! isError(firstError)) {
+                firstError = reason;
+            }
+            maybeFinish();
+        }
+
+        function maybeFinish () {
+            len--;
+            if (! len) {
+                if (isError(firstError)) {
+                    eex.emit('error', firstError);
+                } else {
+                    // flatten the array
+                    eex.emit.apply(eex, concat.apply(['end'], result));
+                }
+            }
         }
     });
 
@@ -302,4 +315,8 @@ EventEmitterEx.fromPromiseFunc = function fromPromiseFunc (f) {
 function assertIsFunction (f) {
     if (typeof f !== 'function')
         throw new TypeError('Argument must be a function. Got ' + typeof f);
+}
+
+function isError (e) {
+    return e !== null && typeof e !== 'undefined';
 }
