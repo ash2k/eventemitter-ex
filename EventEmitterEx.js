@@ -67,7 +67,7 @@ EventEmitterEx.prototype.pipeExcept = function pipeExcept (/* arguments */) {
     var self = this,
         except = slice(arguments, 0, -1);
 
-    if (typeof ee.onAllExcept === 'function') {
+    if (isFunction(ee.onAllExcept)) {
         // This is an EventEmitterEx
         except.push(function (/* arguments */) {
             self.emit.apply(self, arguments);
@@ -269,7 +269,7 @@ EventEmitterEx.prototype.asPromise = function asPromise () {
 };
 
 EventEmitterEx.listenerCount = function listenerCount (eex, type) {
-    return (typeof eex.listenerCountOnAll === 'function' ? eex.listenerCountOnAll(type) : 0) +
+    return (isFunction(eex.listenerCountOnAll) ? eex.listenerCountOnAll(type) : 0) +
         EE.listenerCount(eex, type);
 };
 
@@ -317,9 +317,14 @@ EventEmitterEx.fromPromiseFunc = function fromPromiseFunc (f) {
     return eex;
 };
 
+function isFunction (f) {
+    return typeof f === 'function';
+}
+
 function assertIsFunction (f) {
-    if (typeof f !== 'function')
+    if (! isFunction(f)) {
         throw new TypeError('Argument must be a function. Got ' + typeof f);
+    }
 }
 
 function isError (e) {
