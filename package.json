@@ -5,8 +5,9 @@
   "main": "EventEmitterEx.js",
   "scripts": {
     "spec": "mocha test",
-    "test": "jshint --exclude-path=.gitignore . && mocha test",
-    "coveralls": "istanbul cover _mocha --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "test": "jshint --exclude-path=.gitignore . && npm run spec",
+    "coverage": "istanbul cover _mocha",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
