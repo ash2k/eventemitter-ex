@@ -1,15 +1,39 @@
-language: node_js
-node_js:
-- "0.12"
-- 4
-- 5
-- iojs-v2
-- iojs-v3
+env:
+    matrix:
+        - export NODE_VERSION="0.12"
+        - export NODE_VERSION="4"
+        - export NODE_VERSION="5"
+        - export NODE_VERSION="iojs-v2"
+        - export NODE_VERSION="iojs-v3"
 os:
-- linux
-- osx
+    - linux
+    - osx
 before_install:
-- "[ $TRAVIS_OS_NAME=osx ] && brew update"
-- "[ $TRAVIS_OS_NAME=osx ] && (brew outdated nvm || brew upgrade nvm)"
+    - if [ "$TRAVIS_OS_NAME" == 'osx' ]; then
+        brew update;
+        brew install nvm;
+        export NVM_DIR="$HOME/.nvm";
+        source "$(brew --prefix nvm)/nvm.sh" || true;
+      fi
+    - nvm install "$NODE_VERSION"
+install:
+    - if [ "$TRAVIS_OS_NAME" == 'osx' ]; then
+        export NVM_DIR="$HOME/.nvm";
+        source "$(brew --prefix nvm)/nvm.sh" || true;
+      fi
+    - nvm use "$NODE_VERSION"
+    - npm install
+script:
+    - if [ "$TRAVIS_OS_NAME" == 'osx' ]; then
+        export NVM_DIR="$HOME/.nvm";
+        source "$(brew --prefix nvm)/nvm.sh" || true;
+      fi
+    - nvm use "$NODE_VERSION"
+    - npm test
 after_success:
-  - npm run coveralls
+    - if [ "$TRAVIS_OS_NAME" == 'osx' ]; then
+        export NVM_DIR="$HOME/.nvm";
+        source "$(brew --prefix nvm)/nvm.sh" || true;
+      fi
+    - nvm use "$NODE_VERSION"
+    - npm run coveralls
