@@ -8,5 +8,8 @@ node_js:
 os:
 - linux
 - osx
+before_install:
+- "[ $TRAVIS_OS_NAME=osx ] && brew update"
+- "[ $TRAVIS_OS_NAME=osx ] && (brew outdated nvm || brew upgrade nvm)"
 after_success:
   - npm run coveralls
