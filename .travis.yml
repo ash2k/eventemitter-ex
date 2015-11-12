@@ -2,7 +2,11 @@ language: node_js
 node_js:
 - "0.12"
 - 4
+- 5
 - iojs-v2
 - iojs-v3
+os:
+- linux
+- osx
 after_success:
   - npm run coveralls
